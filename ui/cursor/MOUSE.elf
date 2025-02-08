@@ -1,0 +1,77 @@
+// Show a version for version control
+console.log('%cVersion 1.4.0', 'color: red; font-style: italic;');
+
+// Log the current HTML file and its file path
+console.log(`%cFile: ${document.location.pathname}`, 'color: red; font-style: italic;');
+
+// Function to hide the default cursor globally
+function hideDefaultCursor() {
+    const globalStyle = document.createElement('style');
+    globalStyle.innerHTML = `* { cursor: none !important; }`;
+    document.head.appendChild(globalStyle);
+    console.log("Default cursor hidden");
+}
+
+// Function to get the relative path to root
+function getRelativePathToRoot() {
+    const path = window.location.pathname;
+    const pathParts = path.split('/');
+    const depth = pathParts.length - 1; // number of directory levels to go up
+    let relativePath = '';
+
+    for (let i = 0; i < depth; i++) {
+        relativePath += '../'; // go up one directory
+    }
+
+    return relativePath + 'Windows10-Web/ui/cursor/cursor.ico'; // append the target path
+}
+
+// Function to create the custom cursor
+function MOUSE() {
+    console.log("Initializing custom cursor...");
+
+    // Hide the default cursor first
+    hideDefaultCursor();
+
+    // Create the normal cursor
+    const cursor = document.createElement('div');
+    cursor.style.position = 'absolute';
+    cursor.style.width = '32px';
+    cursor.style.height = '32px';
+
+    // Attempt to load the custom ICO file, fallback to base64 if not found
+    const cursorImage = new Image();
+    cursorImage.onload = () => {
+        cursor.style.backgroundImage = `url(${cursorImage.src})`;
+        console.log("Custom ICO cursor loaded successfully");
+    };
+    cursorImage.onerror = () => {
+        cursor.style.backgroundImage = 'url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABQ0lEQVR4nO3WvUoDQRDA8T8YwUpsoomdoAGfwcoUPoClIGIjCD6Cr5DKLkW6VCmt0omVdfyKhZ3YRezEiIwszMFwXEzEm90mA8ve7hTzY469PZjHbFElcTwC6ykBoohaSoAAT6k6IWYMUyDEvIYwPwBrKQCrwJ3pRD02AEXcxkaIASRBSA4QHSEFgKgImQDIEANzSuqxAdld4YqQKQB3hMwAKELUYgPcEPIHgAtCfgGEO+EMaAE94AZ4zV1gg//+1EgBYBs4BJaAl1zBMD7029AH2sB+mYA94B0YAcvAqebfgB3vY3gCjM3eObAIPOv6oOzimGIX5vlS56wLx+avaYGSQ8wYaxdCXJsuVLR4WB95AUZA0+w3zX7ozqeu7z0AQ2CrIHdlgF9AB9goG9AHVibkdoFvoAs0cIrKlPymV+F54B0/ZzKLTWXLKTUAAAAASUVORK5CYII=';
+        console.log("Custom ICO cursor failed, fallback to base64 image");
+    };
+    cursorImage.src = getRelativePathToRoot(); // Use the dynamic relative path
+
+    cursor.style.backgroundSize = 'cover';
+    cursor.style.pointerEvents = 'none';
+    cursor.style.zIndex = '9999';
+    document.body.appendChild(cursor);
+
+    // Track mouse movement to position the cursor
+    document.addEventListener('mousemove', function(e) {
+        cursor.style.left = e.pageX + 'px';
+        cursor.style.top = e.pageY + 'px';
+    });
+
+    console.log("Cursor created and tracking mouse movement");
+
+    // Prevent context menu unless Shift is held
+    document.addEventListener('contextmenu', function(e) {
+        if (!e.shiftKey) {
+            e.preventDefault();
+        }
+    });
+}
+
+// Call the function to activate the custom cursor behavior
+hideDefaultCursor();
+MOUSE();
