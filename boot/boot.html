@@ -94,10 +94,25 @@
     }
   </style>
   <script>
+    // Hide the default cursor first
+    hideDefaultCursor();
     // Redirect to another page after 10 seconds
     setTimeout(function() {
       window.location.href = "check.html";  // Replace "anotherPage.html" with the target file
     }, 10000);
+    // Function to hide the default cursor globally
+function hideDefaultCursor() {
+    const globalStyle = document.createElement('style');
+    globalStyle.innerHTML = `* { cursor: none !important; }`;
+    document.head.appendChild(globalStyle);
+    console.log("Default cursor hidden");
+}
+    // Prevent context menu unless Shift is held
+    document.addEventListener('contextmenu', function(e) {
+        if (!e.shiftKey) {
+            e.preventDefault();
+        }
+    });
   </script>
 </head>
 <body>
