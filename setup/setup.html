@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Setup</title>
+    <style>
+        body {
+            font-family: Segoe UI, sans-serif;
+            background: linear-gradient(to bottom, #004aad, #00274d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .setup-window {
+            background: white;
+            border-radius: 8px;
+            width: 500px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .setup-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .setup-content {
+            margin-bottom: 20px;
+        }
+
+        .setup-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            background: #0078D7;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-window">
+        <div class="setup-header">Windows 10 Setup</div>
+        <div class="setup-content" id="setup-content">
+            <p>Loading setup...</p>
+        </div>
+        <div class="setup-buttons">
+            <button id="back-btn" style="display: none;">Back</button>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const setupContent = document.getElementById("setup-content");
+            const nextBtn = document.getElementById("next-btn");
+            const backBtn = document.getElementById("back-btn");
+            
+            let currentStep = 0;
+            let userData = {};
+
+            const steps = [
+                { question: "What language do you want to use?", type: "select", options: ["English", "Spanish", "French", "German"], key: "language" },
+                { question: "Do you accept the terms and conditions?", type: "checkbox", key: "terms" },
+                { question: "What is your username?", type: "text", key: "username" },
+                { question: "Choose an installation type", type: "select", options: ["Upgrade", "Custom"], key: "installType" },
+                { question: "Where would you like to install Windows?", type: "text", key: "installPath" }
+            ];
+
+            function showStep() {
+                const step = steps[currentStep];
+                let inputField = "";
+
+                if (step.type === "text") {
+                    inputField = `<input type="text" id="user-input" placeholder="Enter ${step.key}">`;
+                } else if (step.type === "select") {
+                    inputField = `<select id="user-input">${step.options.map(option => `<option value="${option}">${option}</option>`).join('')}</select>`;
+                } else if (step.type === "checkbox") {
+                    inputField = `<input type="checkbox" id="user-input"> I agree`;
+                }
+
+                setupContent.innerHTML = `<p>${step.question}</p>${inputField}`;
+                backBtn.style.display = currentStep > 0 ? "inline-block" : "none";
+                nextBtn.innerText = currentStep === steps.length - 1 ? "Install" : "Next";
+            }
+
+            nextBtn.addEventListener("click", function () {
+                const userInput = document.getElementById("user-input");
+                if (!userInput) return;
+                
+                if (steps[currentStep].type === "checkbox" && !userInput.checked) {
+                    alert("You must agree to the terms.");
+                    return;
+                }
+                
+                userData[steps[currentStep].key] = steps[currentStep].type === "checkbox" ? userInput.checked : userInput.value;
+                
+                currentStep++;
+                if (currentStep < steps.length) {
+                    showStep();
+                } else {
+                    startInstallation();
+                }
+            });
+
+            backBtn.addEventListener("click", function () {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep();
+                }
+            });
+
+            function startInstallation() {
+                setupContent.innerHTML = `<p>Installing Windows...</p><progress id="progress-bar" value="0" max="100" style="width: 100%;"></progress>`;
+                let progress = 0;
+                const progressBar = document.getElementById("progress-bar");
+                
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressBar.value = progress;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setupContent.innerHTML = `<p>Installation Complete! Restarting...</p>`;
+                        setTimeout(() => {
+                            window.location.href = "../end/restart.html";
+                        }, 3000);
+                    }
+                }, 500);
+            }
+
+            showStep();
+        });
+    </script>
+</body>
+</html>
+
