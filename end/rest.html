@@ -14,9 +14,8 @@
       background-color: #000; /* Black background */
       font-family: Arial, sans-serif;
       color: #fff; /* Ensure text is visible if needed */
+      overflow: hidden;
     }
-
-
     .container {
       text-align: center;
     }
@@ -24,7 +23,6 @@
       max-width: 100%;
       height: auto;
     }
-    /* New spinner */
     .spinner {
       position: relative;
       width: 60px;
@@ -49,61 +47,35 @@
       border-radius: 100%;
       translate: 0 27.5px;
     }
-    .spinner div:nth-child(1) {
-      animation-delay: 0s;
-    }
-    .spinner div:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .spinner div:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    .spinner div:nth-child(4) {
-      animation-delay: 0.6s;
-    }
-    .spinner div:nth-child(5) {
-      animation-delay: 0.8s;
-    }
-    .spinner div:nth-child(6) {
-      animation-delay: 1s;
-    }
+    .spinner div:nth-child(1) { animation-delay: 0s; }
+    .spinner div:nth-child(2) { animation-delay: 0.2s; }
+    .spinner div:nth-child(3) { animation-delay: 0.4s; }
+    .spinner div:nth-child(4) { animation-delay: 0.6s; }
+    .spinner div:nth-child(5) { animation-delay: 0.8s; }
+    .spinner div:nth-child(6) { animation-delay: 1s; }
 
     @keyframes r {
-      0% {
-        transform: rotate(-90deg);
-      }
-      35% {
-        transform: rotate(270deg);
-      }
-      70% {
-        transform: rotate(630deg);
-      }
-      100% {
-        transform: rotate(630deg);
-      }
+      0% { transform: rotate(-90deg); }
+      35% { transform: rotate(270deg); }
+      70% { transform: rotate(630deg); }
+      100% { transform: rotate(630deg); }
     }
 
     @keyframes o {
-      0% {
-        opacity: 1;
-      }
-      70% {
-        opacity: 0;
-      }
+      0% { opacity: 1; }
+      70% { opacity: 0; }
     }
-    #advanced-message {
-      display: none; /* Initially hidden */
-      margin-top: 20px;
-      font-size: 16px;
+    .message {
+      font-size: 36px;
       color: #fff;
+      display: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-<script src="../ui/cursor/MOUSE.elf"></script>
-  
-  <div class="container">
-<div class="spinner">
+  <div class="container" id="container">
+    <div class="spinner">
       <div></div>
       <div></div>
       <div></div>
@@ -111,48 +83,35 @@
       <div></div>
       <div></div>
     </div>
-    <p>Restarting your computer.</p>
-    <p id="advanced-message">Going to Advanced Boot Options.</p>
+    <p>Shutting down your computer.</p>
   </div>
-
+  
+  <script src="../ui/cursor/MOUSE.elf"></script>
   <script>
-    let shiftPressedTime = 0;
-    let shiftHeldDown = false;
-
-    // Detect if the Shift key is held down
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Shift' && !shiftHeldDown) {
-        shiftPressedTime = Date.now(); // Start tracking when Shift is pressed
-        shiftHeldDown = true;
-      }
-    });
-
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'Shift') {
-        shiftHeldDown = false;
-      }
-    });
-
-    // Check if Shift key is held down for more than 5 seconds
-    function checkShiftDuration() {
-      if (shiftHeldDown && Date.now() - shiftPressedTime >= 5000) {
-        document.getElementById('advanced-message').style.display = 'block'; // Show the message
-        setTimeout(() => {
-          window.location.href = 'op.html'; // Redirect to op.html after showing the message
-        }, 2000); // Delay for 2 seconds to let the user see the message
-      }
-    }
-
-    // Redirect to index.html after 10 seconds if Shift is not held
     setTimeout(() => {
-      if (!shiftHeldDown || Date.now() - shiftPressedTime < 5000) {
-        window.location.href = "../index.html";
+      document.getElementById("container").style.display = "none";
+      const message = document.createElement("div");
+      message.className = "message";
+      message.innerText = "";
+      document.body.appendChild(message);
+      message.style.display = "block";
+      
+      // Function to hide the default cursor globally
+      function hideDefaultCursor() {
+        const globalStyle = document.createElement('style');
+        globalStyle.innerHTML = `* { cursor: none !important; }`;
+        document.head.appendChild(globalStyle);
+        console.log("Default cursor hidden");
       }
+      
+      hideDefaultCursor();
+
+      // Redirect to index.html after 20 seconds
+      setTimeout(() => {
+        window.location.href = "../index.html";
+      }, 20000);
     }, 10000);
-
-    // Periodically check if Shift is held for 5 seconds
-    setInterval(checkShiftDuration, 100);
-
   </script>
 </body>
 </html>
+
