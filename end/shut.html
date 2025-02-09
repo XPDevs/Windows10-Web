@@ -23,7 +23,6 @@
       max-width: 100%;
       height: auto;
     }
-      /* New spinner */
     .spinner {
       position: relative;
       width: 60px;
@@ -48,60 +47,35 @@
       border-radius: 100%;
       translate: 0 27.5px;
     }
-    .spinner div:nth-child(1) {
-      animation-delay: 0s;
-    }
-    .spinner div:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .spinner div:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    .spinner div:nth-child(4) {
-      animation-delay: 0.6s;
-    }
-    .spinner div:nth-child(5) {
-      animation-delay: 0.8s;
-    }
-    .spinner div:nth-child(6) {
-      animation-delay: 1s;
-    }
+    .spinner div:nth-child(1) { animation-delay: 0s; }
+    .spinner div:nth-child(2) { animation-delay: 0.2s; }
+    .spinner div:nth-child(3) { animation-delay: 0.4s; }
+    .spinner div:nth-child(4) { animation-delay: 0.6s; }
+    .spinner div:nth-child(5) { animation-delay: 0.8s; }
+    .spinner div:nth-child(6) { animation-delay: 1s; }
 
     @keyframes r {
-      0% {
-        transform: rotate(-90deg);
-      }
-      35% {
-        transform: rotate(270deg);
-      }
-      70% {
-        transform: rotate(630deg);
-      }
-      100% {
-        transform: rotate(630deg);
-      }
+      0% { transform: rotate(-90deg); }
+      35% { transform: rotate(270deg); }
+      70% { transform: rotate(630deg); }
+      100% { transform: rotate(630deg); }
     }
 
     @keyframes o {
-      0% {
-        opacity: 1;
-      }
-      70% {
-        opacity: 0;
-      }
+      0% { opacity: 1; }
+      70% { opacity: 0; }
     }
     .message {
       font-size: 36px;
       color: #fff;
-      display: none; /* Initially hidden */
+      display: none;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
-  
   <div class="container" id="container">
-<div class="spinner">
+    <div class="spinner">
       <div></div>
       <div></div>
       <div></div>
@@ -109,28 +83,29 @@
       <div></div>
       <div></div>
     </div>
-<p>Shutting down your computer.</p>
+    <p>Shutting down your computer.</p>
   </div>
-<script src="../ui/cursor/MOUSE.elf"></script>
+  
+  <script src="../ui/cursor/MOUSE.elf"></script>
   <script>
-    // After 10 seconds, clear the screen and display the message
     setTimeout(() => {
-      // Clear the content of the container
-      document.getElementById("container").style.display = "none"; 
-
-      // Create the message element
+      document.getElementById("container").style.display = "none";
       const message = document.createElement("div");
       message.className = "message";
       message.innerText = "";
-      
-      // Append the message to the body
       document.body.appendChild(message);
-      
-      // Show the message
       message.style.display = "block";
+      
+      // Function to hide the default cursor globally
+      function hideDefaultCursor() {
+        const globalStyle = document.createElement('style');
+        globalStyle.innerHTML = `* { cursor: none !important; }`;
+        document.head.appendChild(globalStyle);
+        console.log("Default cursor hidden");
+      }
+      
+      hideDefaultCursor();
     }, 10000);
-
-
   </script>
 </body>
 </html>
