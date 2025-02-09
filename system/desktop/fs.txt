@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Bash script to download i386 .deb packages for wine32 on Linux Mint.
+
+# Define the download folder
+DOWNLOAD_DIR="$HOME/wine32-debs"
+
+# Function to print a message and exit on error
+function exit_on_error() {
+    echo "Error: $1"
+    exit 1
+}
+
+echo "Starting setup for downloading i386 .deb packages for wine32..."
+
+# Ensure the script is run with sudo/root privileges
+if [[ $EUID -ne 0 ]]; then
+    exit_on_error "This script must be run as root. Use sudo."
+fi
+
+# Step 1: Install necessary tools
+echo "Installing required packages..."
+apt update && apt install -y dpkg-dev apt-mirror || exit_on_error "Failed to install required packages."
+
+# Step 2: Enable i386 architecture
+echo "Adding i386 architecture support..."
+dpkg --add-architecture i386 || exit_on_error "Failed to add i386 architecture."
+apt update || exit_on_error "Failed to update package lists."
+
+# Step 3: Set up sources.list for Linux Mint
+echo "Configuring Linux Mint repositories for i386..."
+cat <<EOF > /etc/apt/sources.list
+deb [arch=i386] http://packages.linuxmint.com una main upstream import
+deb [arch=i386] http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse
+deb [arch=i386] http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse
+deb [arch=i386] http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
+EOF
+
+# Step 4: Create a download directory
+echo "Creating download directory at $DOWNLOAD_DIR..."
+mkdir -p "$DOWNLOAD_DIR" || exit_on_error "Failed to create download directory."
+cd "$DOWNLOAD_DIR" || exit_on_error "Failed to access download directory."
+
+# Step 5: Start downloading wine32 and dependencies
+echo "Downloading wine32 and its dependencies..."
+apt-get update || exit_on_error "Failed to update package lists for i386."
+apt-get download $(apt-cache depends wine32 | grep -E "^\s+Depends:" | cut -d: -f2 | tr -d ' ') || exit_on_error "Failed to download wine32 packages."
+
+# Completion message
+echo "Download complete! All wine32 .deb files are stored in $DOWNLOAD_DIR."
+echo "You can transfer these files to your Linux Mint PC."
+
+exit 0

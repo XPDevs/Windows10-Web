@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: none;
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s, visibility 1s;
+            cursor: none;
+        }
+
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            cursor: none;
+        }
+
+        .time-date-box {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: none;
+        }
+
+        .time-date-box .time {
+            font-size: 64px;
+            margin-bottom: 20px;
+            cursor: none;
+        }
+
+        .time-date-box .date {
+            font-size: 32px;
+            cursor: none;
+        }
+
+        .login-window {
+            background-color: white;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            cursor: none;
+        }
+
+        .login-window h2 {
+            margin-bottom: 20px;
+            color: #333;
+            cursor: none;
+        }
+
+        .login-window input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: none;
+        }
+
+        .login-window button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .login-window button:hover {
+            background-color: #45a049;
+            cursor: none;
+        }
+
+        .power-btn-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            cursor: none;
+        }
+
+        .power-btn {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .power-btn:hover {
+            background-color: #e53935;
+            cursor: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            cursor: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            width: 300px;
+            cursor: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #ddd;
+            cursor: none;
+        }
+
+        /* Spinner Animation */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                cursor: none;
+            }
+            100% {
+                transform: rotate(360deg);
+                cursor: none;
+            }
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1); /* Light gray border */
+            border-left: 4px solid #4CAF50; /* Green border */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite; /* Continuous spin */
+            cursor: none;
+        }
+
+        .welcome-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            color: green;
+            font-size: 18px;
+            cursor: none;
+        }
+
+    </style>
+</head>
+<body>
+
+
+<!-- Audio element to play sound -->
+<audio id="login-sound" src="login-sound.mp3" preload="auto"></audio>
+<audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
+
+<div class="screen active" id="main-screen">
+    <div class="time-date-box">
+        <div class="time" id="time"></div>
+        <div class="date" id="date"></div>
+    </div>
+</div>
+
+<div class="screen" id="login-screen">
+    <div class="login-window">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Enter Username" />
+        <input type="password" id="password" placeholder="Enter Password" />
+        <button id="login-btn">Login</button>
+        <p id="login-message" style="color:red;"></p>
+    </div>
+</div>
+
+<div class="modal" id="power-modal">
+    <div class="modal-content">
+        <h3>Power Options</h3>
+        <button id="shutdown-btn">Shutdown</button>
+        <button id="restart-btn">Restart</button>
+        <button id="cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<div class="power-btn-container">
+    <button class="power-btn" id="power-btn">⚡</button>
+</div>
+
+<script src="../../ui/cursor/MOUSE.elf"></script>
+
+    
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const mainScreen = document.getElementById("main-screen");
+    const loginScreen = document.getElementById("login-screen");
+    const powerModal = document.getElementById("power-modal");
+    const powerBtn = document.getElementById("power-btn");
+    const shutdownBtn = document.getElementById("shutdown-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const cancelBtn = document.getElementById("cancel-btn");
+
+    const loginBtn = document.getElementById("login-btn");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const loginMessage = document.getElementById("login-message");
+
+    // Audio elements
+    const loginSound = document.getElementById("login-sound");
+    const wrongSound = document.getElementById("wrong-sound");
+
+    let inactivityTimer;
+
+    function updateTimeAndDate() {
+        const now = new Date();
+        document.getElementById("time").textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById("date").textContent = now.toLocaleDateString();
+    }
+    setInterval(updateTimeAndDate, 1000);
+    updateTimeAndDate();
+
+    function switchToLoginScreen() {
+        mainScreen.classList.remove("active");
+        loginScreen.classList.add("active");
+        resetInactivityTimer();
+    }
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            loginScreen.classList.remove("active");
+            mainScreen.classList.add("active");
+        }, 10000);
+    }
+
+    mainScreen.addEventListener("click", switchToLoginScreen);
+    mainScreen.addEventListener("keypress", switchToLoginScreen);
+
+    loginScreen.addEventListener("click", resetInactivityTimer);
+    loginScreen.addEventListener("keypress", resetInactivityTimer);
+
+    powerBtn.addEventListener("click", () => {
+        powerModal.style.display = "flex";
+    });
+
+    cancelBtn.addEventListener("click", () => {
+        powerModal.style.display = "none";
+    });
+
+    shutdownBtn.addEventListener("click", () => {
+        window.location.href = "../../end/shut.html";
+    });
+
+    restartBtn.addEventListener("click", () => {
+        window.location.href = "../../end/rest.html";
+    });
+
+    loginBtn.addEventListener("click", function () {
+        const storedUsername = localStorage.getItem("username");
+        const storedPassword = localStorage.getItem("password");
+
+        const enteredUsername = usernameInput.value.trim();
+        const enteredPassword = passwordInput.value.trim();
+
+        if (!enteredUsername || !enteredPassword) {
+            loginMessage.textContent = "Please enter both username and password.";
+            loginMessage.style.color = "red";
+            return;
+        }
+
+        if (enteredUsername === storedUsername && enteredPassword === storedPassword) {
+            loginMessage.innerHTML = `
+                <div class="welcome-message">
+                    <div class="spinner"></div>
+                    <p>Welcome</p>
+                </div>
+            `;
+            loginMessage.style.color = "green";
+
+            // Play login sound
+            loginSound.play();
+
+            setTimeout(() => {
+                window.location.href = "../desktop/desktop.html";
+            }, 2000);
+        } else {
+            loginMessage.textContent = "Invalid Username or Password.";
+            loginMessage.style.color = "red";
+
+            // Play wrong sound
+            wrongSound.play();
+        }
+    });
+});
+</script>
+</body>
+</html>
