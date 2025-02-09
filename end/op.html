@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Boot Options</title>
+  <style>
+    /* Basic reset and styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ADD8E6; /* Light Blue background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #000; /* Black text for contrast */
+      margin: 0;
+      cursor: none; /* Hide cursor */
+    }
+
+
+    .container {
+      text-align: center; /* Center text */
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Light shadow */
+      font-family: "Consolas", monospace;
+      color: #000; /* Black text for contrast */
+      cursor: none; /* Hide cursor */
+    }
+
+    .title {
+      font-size: 20px;
+      margin-bottom: 30px;
+      color: #005DFF; /* Blue title */
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: none; /* Hide cursor */
+    }
+
+    .subtitle {
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #555; /* Lighter gray for subtitle */
+      font-family: "Consolas", monospace;
+      cursor: none; /* Hide cursor */
+    }
+
+    .option-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 16px;
+      font-family: "Consolas", monospace;
+      cursor: none; /* Hide cursor */
+    }
+
+    .option-list li {
+      margin: 20px 0;
+      cursor: none; /* Hide cursor */
+    }
+
+    /* Style for buttons */
+    .btn {
+      font-size: 18px;
+      padding: 20px 50px;
+      width: 100%;
+      cursor: none; /* Hide cursor */
+      border: 2px solid #005DFF; /* Blue border */
+      border-radius: 10px;
+      background-color: #C1E4FF; /* Light blue button background */
+      color: #005DFF; /* Blue text */
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: block;
+      text-align: center; /* Center text in button */
+    }
+
+    .btn:hover {
+      background-color: #A1D0FF; /* Slightly darker blue on hover */
+      opacity: 0.8;
+      cursor: none; /* Hide cursor */
+    }
+
+    .btn:active {
+      opacity: 0.6;
+      cursor: none; /* Hide cursor */
+    }
+
+    /* Style for the back button (circular) */
+    .back-btn {
+      font-size: 24px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none; /* Hide cursor */
+      color: #fff;
+      background-color: #005DFF;
+      border-radius: 50%; /* Circular shape */
+      border: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #0044cc;
+      opacity: 0.8;
+      cursor: none; /* Hide cursor */
+    }
+
+    .back-btn:active {
+      opacity: 0.6;
+      cursor: none; /* Hide cursor */
+    }
+
+    .back-btn::before {
+      content: '←';
+      font-size: 24px;
+      cursor: none; /* Hide cursor */
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Main container for options -->
+<div class="container" id="main-options">
+  <div class="title">Advanced Boot Options</div>
+  <div class="subtitle">Use the buttons to choose an option to use.</div>
+  <ul class="option-list">
+    <li><a href="rest.html" class="btn">Restart to WebOS</a></li>
+    <li><a href="shut.html" class="btn">Shutdown</a></li>
+    <li><a href="javascript:void(0);" class="btn" id="advanced-options">Advanced Options</a></li>
+  </ul>
+</div>
+
+<!-- Advanced Options container, initially hidden -->
+<div class="container" id="advanced-options-container" style="display: none;">
+  <a href="javascript:void(0);" class="back-btn" id="back-btn"></a>
+  <div class="title">Advanced Options</div>
+  <ul class="option-list">
+    <li><a href="terminal/termrst.html" class="btn">Restart to Terminal</a></li>
+    <li><a href="javascript:void(0);" class="btn" id="startup-settings">Startup Settings</a></li>
+  </ul>
+</div>
+
+<!-- Startup Settings container, initially hidden -->
+<div class="container" id="startup-settings-container" style="display: none;">
+  <a href="javascript:void(0);" class="back-btn" id="back-to-advanced-btn"></a>
+  <div class="title">Startup Settings</div>
+  <div class="subtitle">Here are the options you can configure:</div>
+  <div class="option-list">
+    <p>1. Boot from USB</p>
+    <p>2. Boot in Safe Mode</p>
+    <p>3. Boot with Recovery Tools</p>
+    <p>4. Enable Debug Mode</p>
+  </div>
+  <a href="javascript:void(0);" class="btn" id="restart-btn">Restart</a>
+</div>
+
+<script src="../ui/cursor/MOUSE.elf"></script>
+
+  
+<script>
+  const cursor = document.getElementById('cursor');
+  const advancedOptionsButton = document.getElementById('advanced-options');
+  const startupSettingsButton = document.getElementById('startup-settings');
+  const backButton = document.getElementById('back-btn');
+  const backToAdvancedButton = document.getElementById('back-to-advanced-btn');
+  const mainOptionsContainer = document.getElementById('main-options');
+  const advancedOptionsContainer = document.getElementById('advanced-options-container');
+  const startupSettingsContainer = document.getElementById('startup-settings-container');
+  const restartButton = document.getElementById('restart-btn');
+
+
+  // Show advanced options when "Advanced Options" is clicked
+  advancedOptionsButton.addEventListener('click', () => {
+    mainOptionsContainer.style.display = 'none';  // Hide main options
+    advancedOptionsContainer.style.display = 'block';  // Show advanced options
+  });
+
+  // Show startup settings when "Startup Settings" is clicked
+  startupSettingsButton.addEventListener('click', () => {
+    advancedOptionsContainer.style.display = 'none';  // Hide advanced options
+    startupSettingsContainer.style.display = 'block';  // Show startup settings
+  });
+
+  // Go back to advanced options when back button is clicked
+  backButton.addEventListener('click', () => {
+    mainOptionsContainer.style.display = 'block';  // Show main options
+    advancedOptionsContainer.style.display = 'none';  // Hide advanced options
+  });
+
+  // Go back to advanced options from startup settings
+  backToAdvancedButton.addEventListener('click', () => {
+    advancedOptionsContainer.style.display = 'block';  // Show advanced options
+    startupSettingsContainer.style.display = 'none';  // Hide startup settings
+  });
+
+  // Handle restart button click
+  restartButton.addEventListener('click', () => {
+    window.location.href = 'startup_set/setrst.html'; // Redirect to restart page (replace with your target file)
+  });
+</script>
+
+</body>
+</html>

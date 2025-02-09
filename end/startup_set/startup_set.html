@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Startup Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ADD8E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #000;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+      font-family: "Consolas", monospace;
+      color: #000;
+    }
+
+    .back-btn {
+      font-size: 24px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      background-color: #005DFF;
+      border-radius: 50%;
+      border: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #0044cc;
+      opacity: 0.8;
+    }
+
+    .back-btn:active {
+      opacity: 0.6;
+    }
+
+    .back-btn::before {
+      content: '←';
+      font-size: 24px;
+    }
+
+    .title {
+      font-size: 20px;
+      color: #005DFF;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    select, button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #005DFF;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #005DFF;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0044cc;
+    }
+
+    #resultMessage {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .modal-content button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <a href="../rest.html" class="back-btn" id="back-btn"></a>
+    <div class="title">Startup Settings</div>
+    <p>Press a number key between 1 and 4.</p>
+    <p>1. Boot from USB</p>
+    <p>2. Boot in Safe Mode</p>
+    <p>3. Boot with Recovery Tools</p>
+    <p>4. Enable Debug Mode</p>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <p id="modalText"></p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('keydown', function(event) {
+      const pressedKey = event.key;
+      console.log(`Key pressed: ${pressedKey}`);
+
+      if (pressedKey === '1') {
+        console.log("Switching to USB Auto-Connect UI...");
+        showUSBAutoConnectUI();
+      } else if (pressedKey === '2') {
+        showModal('Safe Mode is not available yet.');
+      } else if (pressedKey === '3') {
+        showModal('Recovery Tools are not available yet.');
+      } else if (pressedKey === '4') {
+        showModal('Debug Mode is not available yet.');
+      }
+    });
+
+    async function showUSBAutoConnectUI() {
+      const container = document.getElementById('container');
+
+      // Clear the content and set up the new UI
+      container.innerHTML = `
+        <a href="startup_set.html" class="back-btn"></a>
+        <div class="title">Booting from USB</div>
+        <p>Select the drive letter of the USB drive to search for <strong>boot.html</strong>.</p>
+        <select id="driveSelect">
+          <option value="C">C:</option>
+          <option value="D">D:</option>
+          <option value="E">E:</option>
+          <option value="F">F:</option>
+          <option value="G">G:</option>
+        </select>
+        <button id="checkDriveBtn">Check Drive</button>
+        <div id="resultMessage"></div>
+      `;
+
+      const checkDriveBtn = document.getElementById('checkDriveBtn');
+      checkDriveBtn.addEventListener('click', checkDriveForBootFile);
+    }
+
+    function showModal(message) {
+      const modal = document.getElementById('modal');
+      const modalText = document.getElementById('modalText');
+      modalText.textContent = message;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.style.display = 'none';
+    }
+
+    function checkDriveForBootFile() {
+      const driveSelect = document.getElementById('driveSelect');
+      const resultMessage = document.getElementById('resultMessage');
+      const selectedDrive = driveSelect.value;
+
+      console.log(`Navigating to ${selectedDrive}:/boot.html...`);
+      resultMessage.textContent = `Navigating to ${selectedDrive}:/boot.html...`;
+
+      // Simulate the navigation to boot.html
+      setTimeout(() => {
+          resultMessage.textContent = `Found boot.html on drive ${selectedDrive}! Navigating...`;
+          window.location.href = `${selectedDrive}:/boot.html`; // Redirect to boot.html
+      }, 2000); // Simulate the time it takes to check
+    }
+  </script>
+</body>
+</html>

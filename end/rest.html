@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image with Spinner</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000; /* Black background */
+      font-family: Arial, sans-serif;
+      color: #fff; /* Ensure text is visible if needed */
+    }
+
+
+    .container {
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    /* New spinner */
+    .spinner {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      margin: 20px auto;
+    }
+    .spinner div {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      animation: r 5s infinite cubic-bezier(0.15, 0.55, 0.85, 0.45), o 5s infinite step-end;
+    }
+    .spinner div::after {
+      content: "";
+      display: block;
+      width: 5px;
+      height: 5px;
+      background-color: currentColor;
+      border-radius: 100%;
+      translate: 0 27.5px;
+    }
+    .spinner div:nth-child(1) {
+      animation-delay: 0s;
+    }
+    .spinner div:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .spinner div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    .spinner div:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+    .spinner div:nth-child(5) {
+      animation-delay: 0.8s;
+    }
+    .spinner div:nth-child(6) {
+      animation-delay: 1s;
+    }
+
+    @keyframes r {
+      0% {
+        transform: rotate(-90deg);
+      }
+      35% {
+        transform: rotate(270deg);
+      }
+      70% {
+        transform: rotate(630deg);
+      }
+      100% {
+        transform: rotate(630deg);
+      }
+    }
+
+    @keyframes o {
+      0% {
+        opacity: 1;
+      }
+      70% {
+        opacity: 0;
+      }
+    }
+    #advanced-message {
+      display: none; /* Initially hidden */
+      margin-top: 20px;
+      font-size: 16px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<script src="../ui/cursor/MOUSE.elf"></script>
+  
+  <div class="container">
+<div class="spinner">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <p>Restarting your computer.</p>
+    <p id="advanced-message">Going to Advanced Boot Options.</p>
+  </div>
+
+  <script>
+    let shiftPressedTime = 0;
+    let shiftHeldDown = false;
+
+    // Detect if the Shift key is held down
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Shift' && !shiftHeldDown) {
+        shiftPressedTime = Date.now(); // Start tracking when Shift is pressed
+        shiftHeldDown = true;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'Shift') {
+        shiftHeldDown = false;
+      }
+    });
+
+    // Check if Shift key is held down for more than 5 seconds
+    function checkShiftDuration() {
+      if (shiftHeldDown && Date.now() - shiftPressedTime >= 5000) {
+        document.getElementById('advanced-message').style.display = 'block'; // Show the message
+        setTimeout(() => {
+          window.location.href = 'op.html'; // Redirect to op.html after showing the message
+        }, 2000); // Delay for 2 seconds to let the user see the message
+      }
+    }
+
+    // Redirect to index.html after 10 seconds if Shift is not held
+    setTimeout(() => {
+      if (!shiftHeldDown || Date.now() - shiftPressedTime < 5000) {
+        window.location.href = "../index.html";
+      }
+    }, 10000);
+
+    // Periodically check if Shift is held for 5 seconds
+    setInterval(checkShiftDuration, 100);
+
+  </script>
+</body>
+</html>
