@@ -117,9 +117,9 @@
       const isInstalled = localStorage.getItem("isInstalled");
 
       if (isInstalled === "true") {
-        window.location.href = "boot.html"; // Redirect to login if installed
+        window.location.href = "../end/rest.html"; // Redirect to login if installed
       } else {
-        window.location.href = "boot.html"; // Redirect to install if not installed
+        window.location.href = "../end/rest.html"; // Redirect to install if not installed
       }
     }, 20000); // Wait 20 seconds before checking installation status and redirecting
   </script>
