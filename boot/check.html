@@ -90,6 +90,18 @@
       const isInstalled = localStorage.getItem("isInstalled");
       window.location.href = "../end/rest.html";
     }, 20000);
+
+        // Prevent context menu unless Shift is held
+    document.addEventListener('contextmenu', function(e) {
+        if (!e.shiftKey) {
+            e.preventDefault();
+        }
+    });
+
+    // Prevent text selection globally
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+    });
   </script>
 </body>
 </html>
